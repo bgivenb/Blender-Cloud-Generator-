@@ -73,7 +73,10 @@ class OBJECT_OT_GenerateCloud(Operator):
             cloud_top = bpy.context.active_object
             cloud_top.name = "cumulus_cloud_top"
             cloud_top.scale = (3, 3, 3)
+            cloud_top.location.x += random.uniform(-1.5, 1.5)
+            cloud_top.location.y += random.uniform(-1.5, 1.5)
             central_spheres.append(cloud_top)
+            
         elif props.cloud_type == 'STRATUS':
             # Stratus: Single central sphere, flattened
             bpy.ops.mesh.primitive_uv_sphere_add(radius=1, location=(0, 0, 0))
