@@ -72,7 +72,7 @@ class OBJECT_OT_GenerateCloud(Operator):
             bpy.ops.mesh.primitive_uv_sphere_add(radius=1, location=(0, 0, 3))
             cloud_top = bpy.context.active_object
             cloud_top.name = "cumulus_cloud_top"
-            cloud_top.scale = (3, 3, 3)
+            cloud_top.scale = (4, 4, 4)
             cloud_top.location.x += random.uniform(-1.5, 1.5)
             cloud_top.location.y += random.uniform(-1.5, 1.5)
             central_spheres.append(cloud_top)
@@ -109,7 +109,7 @@ class OBJECT_OT_GenerateCloud(Operator):
 
         # Create cloud chunks
         cloud_chunks = []
-        for i in range(1, 31):
+        for i in range(1, 50):
             bpy.ops.mesh.primitive_uv_sphere_add(radius=1)
             chunk = bpy.context.active_object
             chunk.name = f"cloudchunk_{i:02d}"
@@ -120,7 +120,7 @@ class OBJECT_OT_GenerateCloud(Operator):
             chunk.location.z = random.uniform(-1.5, 1.5)
 
             # Randomize scale between 0.5 and 1.5
-            scale_factor = random.uniform(0.5, 1.5)
+            scale_factor = random.uniform(0.5, 2.5)
             chunk.scale = (scale_factor, scale_factor, scale_factor)
 
             cloud_chunks.append(chunk)
@@ -162,11 +162,11 @@ class OBJECT_OT_GenerateCloud(Operator):
 
         # Create a new Clouds texture
         clouds_tex = bpy.data.textures.new(name="CloudNoise", type='CLOUDS')
-        clouds_tex.noise_scale = 1  # Set noise scale to 1 as specified
+        clouds_tex.noise_scale = random.uniform(0.8, 1.2)  # Set noise scale to 1 as specified
 
         # Assign the Clouds texture to the Displace modifier
         displace.texture = clouds_tex
-        displace.strength = 1  # Adjust strength if needed
+        displace.strength = 0.5  # Adjust strength if needed
 
         bpy.ops.object.modifier_apply(modifier=displace.name)
 
@@ -206,9 +206,9 @@ class OBJECT_OT_GenerateCloud(Operator):
         bpy.ops.object.modifier_add(type='SUBSURF')
         subdiv = joined_cloud.modifiers[-1]
         subdiv.name = "Subdivision_Surface"
-        subdiv.levels = 1
-        subdiv.render_levels = 1
-        subdiv.quality = 1
+        subdiv.levels = 2
+        subdiv.render_levels = 2
+        subdiv.quality = 2
         subdiv.subdivision_type = 'CATMULL_CLARK'
 
         # Apply Subdivision Surface Modifier
@@ -224,6 +224,19 @@ class OBJECT_OT_GenerateCloud(Operator):
         displace2.strength = 0.25  # Set strength to 0.25 as specified
 
         bpy.ops.object.modifier_apply(modifier=displace2.name)
+        
+        # Apply Displace Modifier with Clouds Texture
+        bpy.ops.object.modifier_add(type='DISPLACE')
+        displace = joined_cloud.modifiers[-1]
+        displace.name = "Displace_Clouds_Third"
+
+        # Create a new Clouds texture
+        clouds_tex2 = bpy.data.textures.new(name="CloudNoise2", type='CLOUDS')
+        clouds_tex2.noise_scale = random.uniform(0.1, 0.13)  # Set noise scale to 1 as specified
+
+        # Assign the Clouds texture to the Displace modifier
+        displace.texture = clouds_tex2
+        displace.strength = 0.05  # Adjust strength if needed
 
         # Decimate the Cloud Mesh using target_detail
         bpy.ops.object.modifier_add(type='DECIMATE')
